@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Word Animation</title>
+	<style>
+		@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap");
+
+		:root {
+			--angle: 4deg;
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			width: 100%;
+			height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: #000;
+			overflow: hidden;
+		}
+
+		.word-container {
+			position: relative;
+			width: 100%;
+			min-height: 100%;
+			outline: 1px solid red;
+		}
+
+		.word {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			font-family: "Montserrat";
+			font-size: 8rem;
+			font-weight: 900;
+			color: var(--color, #fff);
+			display: flex;
+			pointer-events: none;
+			user-select: none;
+			line-height: 5.8rem;
+
+			.char {
+				position: relative;
+				-webkit-text-stroke: 2px #000;
+				transform: translateY(-45%) rotate(var(--angle));
+				animation: up-and-down 2s ease infinite;
+				animation-delay: calc((var(--word-index) * -0.15s) + (var(--char-index) * 0.1s));
+				z-index: calc(-1 * var(--char-index));
+				margin-left: -1.6rem;
+			}
+		}
+
+		@keyframes up-and-down {
+			0%,
+			100% {
+				transform: translateY(-45%) rotate(var(--angle));
+			}
+			50% {
+				transform: translateY(45%) rotate(var(--angle));
+			}
+		}
+	</style>
+</head>
+<body>
+	<span class="word-container" data-word="CHOOSE" data-word-repeat="4"
+		data-text-colors="#FCA400,#0046DB,#FD0000,#FEFCFE"></span>
+
+	<script>
+		console.clear();
+
+		const wordContainerEl = document.querySelector("[data-word]");
+		const word = wordContainerEl.getAttribute("data-word");
+		const wordRepeatTimes = wordContainerEl.getAttribute("data-word-repeat");
+		const textColorsArray = wordContainerEl.getAttribute("data-text-colors").split(",");
+
+		for (let i = 0; i < wordRepeatTimes; i++) {
+			const wordEl = document.createElement("span");
+			wordEl.className = "word";
+			wordEl.style.setProperty("--word-index", i);
+			wordEl.style.setProperty("--color", textColorsArray[i]);
+			for (let j = 0; j < word.length; j++) {
+				const charEl = document.createElement("span");
+				charEl.className = "char";
+				charEl.style.setProperty("--char-index", j);
+				charEl.innerHTML = word[j];
+				wordEl.appendChild(charEl);
+			}
+			wordContainerEl.appendChild(wordEl);
+		}
+	</script>
+</body>
+</html>
