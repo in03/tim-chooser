@@ -20,27 +20,39 @@ const Overlay = styled(motion.div)`
 
 const Card = styled(motion.div)`
   background: white;
-  padding: 3rem;
+  padding: clamp(1.5rem, 4vh, 3rem);
   border-radius: 16px;
   text-align: left;
   max-width: 90vw;
-  width: 500px;
+  width: min(500px, 90vw);
   position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  
+  @media screen and (max-width: 768px) and (orientation: landscape) {
+    padding: 1rem;
+    max-height: 80vh;
+  }
 `;
 
 const Letter = styled.div`
   color: #1a1a1a;
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 3vh, 1.2rem);
   line-height: 1.6;
   font-family: 'Georgia', serif;
   
   p {
-    margin-bottom: 1.5rem;
+    margin-bottom: clamp(1rem, 3vh, 1.5rem);
   }
   
   .signature {
-    margin-top: 2rem;
+    margin-top: clamp(1rem, 3vh, 2rem);
     font-style: italic;
+  }
+  
+  @media screen and (max-width: 768px) and (orientation: landscape) {
+    font-size: clamp(0.875rem, 2.5vh, 1.2rem);
+    line-height: 1.4;
   }
 `;
 

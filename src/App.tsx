@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { motion, AnimatePresence } from 'framer-motion'
 import ChoiceWheel from './components/ChoiceWheel'
-import ChoiceAnimation from './components/ChoiceAnimation'
 import ResultCard from './components/ResultCard'
 import ReadMoreCard from './components/ReadMoreCard'
+import OrientationMessage from './components/OrientationMessage'
 import { Choice } from './types'
 
 const defaultChoices: Choice[] = [
@@ -26,6 +26,10 @@ const AppContainer = styled.div`
   justify-content: center;
   position: relative;
   overflow: hidden;
+
+  @media screen and (max-width: 768px) and (orientation: portrait) {
+    display: none;
+  }
 `
 
 const ButtonContainer = styled.div`
@@ -34,6 +38,14 @@ const ButtonContainer = styled.div`
   display: flex;
   gap: 1rem;
   z-index: 10;
+  
+  @media screen and (max-width: 768px) and (orientation: landscape) {
+    bottom: 1rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 1rem;
+  }
 `
 
 const Button = styled.button<{ disabled?: boolean }>`
@@ -42,12 +54,18 @@ const Button = styled.button<{ disabled?: boolean }>`
   border-radius: 8px;
   background-color: ${props => props.disabled ? '#666' : '#646cff'};
   color: white;
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2vh, 1rem);
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   transition: background-color 0.2s;
+  white-space: nowrap;
 
   &:hover {
     background-color: ${props => props.disabled ? '#666' : '#747bff'};
+  }
+  
+  @media screen and (max-width: 768px) and (orientation: landscape) {
+    padding: 0.5rem 1rem;
+    font-size: clamp(0.75rem, 2vh, 0.875rem);
   }
 `
 
@@ -56,6 +74,23 @@ function App() {
   const [isAnimating, setIsAnimating] = useState(false)
   const [selectedChoice, setSelectedChoice] = useState<Choice | null>(null)
   const [showReadMore, setShowReadMore] = useState(false)
+  const [isPortrait, setIsPortrait] = useState(false)
+  const [isPulsing, setIsPulsing] = useState(false)
+
+  useEffect(() => {
+    const checkOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth)
+    }
+
+    checkOrientation()
+    window.addEventListener('resize', checkOrientation)
+    window.addEventListener('orientationchange', checkOrientation)
+
+    return () => {
+      window.removeEventListener('resize', checkOrientation)
+      window.removeEventListener('orientationchange', checkOrientation)
+    }
+  }, [])
 
   const handleAddOption = () => {
     if (choices.length < 10) {
@@ -87,44 +122,52 @@ function App() {
   const handleChoose = () => {
     if (choices.length > 0) {
       setIsAnimating(true)
+      setIsPulsing(true)
       const randomIndex = Math.floor(Math.random() * choices.length)
       setTimeout(() => {
         setSelectedChoice(choices[randomIndex])
         setIsAnimating(false)
-      }, 5000)
+        setIsPulsing(false)
+      }, 3000)
     }
   }
 
   return (
-    <AppContainer>
-      <AnimatePresence>
-        {!isAnimating && !selectedChoice && (
-          <ChoiceWheel
-            choices={choices}
-            onUpdateChoice={handleUpdateChoice}
-            onRemoveChoice={handleRemoveChoice}
-          />
-        )}
-        {isAnimating && <ChoiceAnimation />}
-        {selectedChoice && <ResultCard choice={selectedChoice} onClose={() => setSelectedChoice(null)} />}
-        {showReadMore && <ReadMoreCard onClose={() => setShowReadMore(false)} />}
-      </AnimatePresence>
+    <>
+      {isPortrait ? (
+        <OrientationMessage />
+      ) : (
+        <AppContainer>
+          <AnimatePresence>
+            {!selectedChoice && (
+              <ChoiceWheel
+                choices={!isAnimating ? choices : []}
+                onUpdateChoice={handleUpdateChoice}
+                onRemoveChoice={handleRemoveChoice}
+                isPulsing={isPulsing}
+              />
+            )}
+            {selectedChoice && <ResultCard choice={selectedChoice} onClose={() => setSelectedChoice(null)} />}
+            {showReadMore && <ReadMoreCard onClose={() => setShowReadMore(false)} />}
+          </AnimatePresence>
 
-      <ButtonContainer>
-        <Button onClick={handleClearAll} disabled={choices.length === 0}>
-          Clear All Options
-        </Button>
-        <Button onClick={handleAddOption} disabled={choices.length >= 10}>
-          Add Option
-        </Button>
-        <Button onClick={handleChoose} disabled={choices.length === 0}>
-          Choose
-        </Button>
-        <Button onClick={() => setShowReadMore(true)}>
-          Read More
-        </Button>
-      </ButtonContainer>
-    </AppContainer>
+          <ButtonContainer>
+            <Button onClick={handleClearAll} disabled={choices.length === 0 || isAnimating}>
+              Clear All Options
+            </Button>
+            <Button onClick={handleAddOption} disabled={choices.length >= 10 || isAnimating}>
+              Add Option
+            </Button>
+            <Button onClick={handleChoose} disabled={choices.length === 0 || isAnimating}>
+              Choose
+            </Button>
+            <Button onClick={() => setShowReadMore(true)}>
+              Read More
+            </Button>
+          </ButtonContainer>
+        </AppContainer>
+      )}
+    </>
   )
 }
 
