@@ -8,28 +8,6 @@ const Container = styled.div`
   min-height: 100%;
 `;
 
-const Word = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-family: "Montserrat", sans-serif;
-  font-size: 8rem;
-  font-weight: 900;
-  color: var(--color, #fff);
-  display: flex;
-  pointer-events: none;
-  user-select: none;
-  line-height: 5.8rem;
-`;
-
-const Char = styled.span`
-  position: relative;
-  -webkit-text-stroke: 2px #000;
-  transform: translateY(-45%) rotate(4deg);
-  margin-left: -1.6rem;
-`;
-
 const WORD = 'CHOOSE';
 const COLORS = ['#FCA400', '#0046DB', '#FD0000', '#FEFCFE'];
 const WORD_COUNT = 4;
@@ -45,7 +23,7 @@ const ChoiceAnimation = () => {
       wordEl.className = 'word';
       wordEl.style.setProperty('--color', COLORS[i]);
       
-      WORD.split('').forEach((char, j) => {
+      WORD.split('').forEach((char) => {
         const charEl = document.createElement('span');
         charEl.className = 'char';
         charEl.textContent = char;

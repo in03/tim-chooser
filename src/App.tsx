@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import ChoiceWheel from './components/ChoiceWheel'
 import ResultCard from './components/ResultCard'
 import ReadMoreCard from './components/ReadMoreCard'
