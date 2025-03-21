@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Choice } from '../types';
+import { theme } from '../styles/theme';
 
 interface Props {
   choices: Choice[];
@@ -46,7 +47,8 @@ const CenterText = styled(motion.div)`
   font-family: "Montserrat", sans-serif;
   font-weight: 900;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
   line-height: 1;
   z-index: 2;
   white-space: nowrap;
@@ -141,10 +143,23 @@ const RemoveButton = styled.button`
   }
 `;
 
-const Word = styled(motion.div)`
-  position: relative;
+const Word = styled.div`
   display: flex;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 0;
   gap: clamp(-0.8rem, -1.6vw, -1.6rem);
+`;
+
+const Subtitle = styled.div`
+  font-size: 0.7rem;
+  color: ${theme.colors.text};
+  opacity: 0.6;
+  text-align: center;
+  margin-top: -1rem;
+  font-family: ${theme.fonts.body};
+  letter-spacing: 0.1em;
+  font-style: italic;
 `;
 
 const Letter = styled(motion.span)<{ $color: string }>`
@@ -313,6 +328,7 @@ const ChoiceWheel: React.FC<Props> = ({ choices, onUpdateChoice, onRemoveChoice,
               </Letter>
             ))}
           </Word>
+          <Subtitle>like Tim</Subtitle>
         </CenterText>
         <AnimatePresence>
           <OrbitContainer>

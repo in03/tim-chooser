@@ -98,7 +98,18 @@ const MessageText = styled(motion.div)`
 `;
 
 const ResultCard: React.FC<Props> = ({ choice, onClose }) => {
-  const [playTada] = useSound('/tada.mp3');
+  const [playTada] = useSound('/tim-chooser/audio/tada.mp3', {
+    volume: 0.75,
+    onload: () => {
+      console.log('Tada sound loaded successfully');
+    },
+    onloaderror: (_id: string, error: Error) => {
+      console.error('Error loading tada sound:', error);
+    },
+    onplayerror: (_id: string, error: Error) => {
+      console.error('Error playing tada sound:', error);
+    }
+  });
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {

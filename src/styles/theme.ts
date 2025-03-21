@@ -20,4 +20,7 @@ export const theme = {
   borderRadius: {
     default: '8px',
   },
+  fonts: {
+    body: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
+  },
 }; 
